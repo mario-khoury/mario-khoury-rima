@@ -2,6 +2,6 @@
 
 Pass-the-phone party game in English and Arabic. Everyone gets the same secret word, except the spy.
 
-Play: https://mario-khoury.github.io
+Play: https://mario-khoury.github.io/mario-khoury-rima/
 
 Photos come from Wikipedia and Wikimedia Commons, under their free licences.
