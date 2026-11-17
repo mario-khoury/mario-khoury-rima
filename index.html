@@ -63,6 +63,7 @@ button:focus-visible,input:focus-visible{outline:3px solid #2b7cff;outline-offse
 ul.list{list-style:none;padding:0;margin:10px 0 0}
 ul.list li{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
 .hide{display:none}
+#offline.ok{color:#b8f5c8;font-weight:600}
 .linkbtn{background:none;border:0;color:inherit;font:inherit;text-decoration:underline;cursor:pointer;min-height:44px;padding:0 4px}
 ul.credits li{display:block;font-size:14px}ul.credits li b{display:block}ul.credits a{color:var(--ink);overflow-wrap:anywhere}
 .pic img{display:block;margin:0 auto;width:min(100%,300px);aspect-ratio:4/3;object-fit:cover;border:6px solid #fbf7ee;border-bottom-width:22px;border-radius:3px;box-shadow:0 8px 18px rgba(0,0,0,.3);transform:rotate(-2deg)}
@@ -132,7 +133,7 @@ footer{margin-top:22px;text-align:center}
     <button class="btn ghost" id="toSetup">Change settings</button>
   </section>
 
-  <footer class="small">Works on iPhone and Android</footer>
+  <footer class="small"><span id="offline">Checking offline mode…</span></footer>
 </div>
 
 <script>
@@ -246,6 +247,24 @@ $("start").onclick=startGame;
 renderSetup();
 }
 </script>
-<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>
+<script>
+(()=>{
+  const el=document.getElementById('offline');
+  if(!('serviceWorker' in navigator)||!window.caches){if(el)el.textContent='This browser can\'t save the game for offline play';return;}
+  const PACKS=['places','food','jobs','animals','sports-hobbies','things'];
+  async function check(){
+    let n=0;
+    try{const c=await caches.open('spy-v3');for(const p of PACKS)if(await c.match('photos/'+p+'.json'))n++;}catch(e){}
+    if(n===PACKS.length){el.textContent='✓ Ready to play offline';el.className='ok';return true;}
+    el.textContent=navigator.onLine?`Saving for offline… ${n}/${PACKS.length} — keep this open`:`Offline: ${n}/${PACKS.length} photo packs saved`;
+    el.className='';return false;
+  }
+  addEventListener('load',async()=>{
+    if(!(await check())){const t=setInterval(async()=>{if(await check())clearInterval(t);},1500);}
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+    navigator.serviceWorker.ready.then(reg=>{if(reg.active&&navigator.onLine)reg.active.postMessage('save-photos');});
+  });
+})();
+</script>
 </body>
 </html>
