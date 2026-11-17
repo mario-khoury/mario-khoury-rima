@@ -254,7 +254,7 @@ renderSetup();
   const PACKS=['places','food','jobs','animals','sports-hobbies','things'];
   async function check(){
     let n=0;
-    try{const c=await caches.open('spy-v3');for(const p of PACKS)if(await c.match('photos/'+p+'.json'))n++;}catch(e){}
+    try{for(const p of PACKS)if(await caches.match(new URL('photos/'+p+'.json',location.href).href,{ignoreSearch:true}))n++;}catch(e){}
     if(n===PACKS.length){el.textContent='✓ Ready to play offline';el.className='ok';return true;}
     el.textContent=navigator.onLine?`Saving for offline… ${n}/${PACKS.length} — keep this open`:`Offline: ${n}/${PACKS.length} photo packs saved`;
     el.className='';return false;
