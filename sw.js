@@ -1,5 +1,5 @@
 // Offline support: the game page is saved first, then the photo packs one by one in the background.
-const C='spy-v3';
+const C='spy-v4';
 const CORE=['./','index.html','manifest.json','icon-192.png','icon-512.png','apple-touch-icon.png'];
 const PHOTOS=['photos/places.json','photos/food.json','photos/jobs.json','photos/animals.json','photos/sports-hobbies.json','photos/things.json'];
 
